@@ -61,7 +61,7 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
         }
 
         .login-container {
-            max-width: 400px;
+            max-width: 500px;
             margin: 5% auto;
             padding: 20px;
             background-color: #ffffff;
