@@ -85,33 +85,9 @@ if (isset($_POST['submit'])) {
 
 
 
-    // Create a Twilio client
-    $client = new Client($account_sid, $auth_token);
-
-    // Prepare the order information for the SMS
-    // Prepare the order information for the SMS
-    $order_information = "Order details:\n";
-    if (isset($_POST['product_name']) && isset($_POST['quantity'])) {
-        foreach ($_POST['product_name'] as $index => $product) {
-            $order_information .= $product . ', Quantity: ' . $_POST['quantity'][$index] . "\n";
-        }
-    }
-    $order_information .= 'Total Price: ' . $_POST['total_price'] . "\n";
-    $order_information .= 'Customer Name: ' . $customer_name . "\n";
-    $order_information .= 'Customer Address: ' . $customer_address . "\n";
-    $order_information .= 'Contact No: ' . $customer_tel_num . "\n";
-    $order_information .= 'Landmark: ' . $landmark . "\n";
-    $order_information .= 'Remarks: ' . $remarks . "\n";
 
 
-    // Send the SMS
-    $message = $client->messages->create(
-        $branch_phone_number,
-        [
-            'from' => $twilio_phone_number,
-            'body' => $order_information,
-        ]
-    );
+
 
     // Close the connection
     mysqli_close($conn);
