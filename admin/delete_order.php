@@ -4,11 +4,7 @@
 if (isset($_POST['order_id'])) {
     $order_id = $_POST['order_id'];
 
-    $conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
+    require_once 'db_connection.php';
 
     // First, delete any rows in the order_items table that reference the order_id
     $delete_order_items_sql = "DELETE FROM order_items WHERE order_id = $order_id";

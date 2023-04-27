@@ -1,9 +1,6 @@
 <?php
 // Database connection
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 // Insert branch
 $branch_name = mysqli_real_escape_string($conn, $_POST['branch_name']);

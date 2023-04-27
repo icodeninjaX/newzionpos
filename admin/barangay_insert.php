@@ -3,10 +3,7 @@ session_start();
 require_once 'admin_auth_check.php';
 requireAdmin();
 
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $barangay_name = $_POST["barangay_name"];

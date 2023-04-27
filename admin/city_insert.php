@@ -7,10 +7,7 @@ if (!isset($_POST['form_type']) || !isset($_POST['city_name'])) {
 $form_type = $_POST['form_type'];
 $city_name = $_POST['city_name'];
 
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 if ($form_type === 'city') {
     $city_name = mysqli_real_escape_string($conn, $city_name);

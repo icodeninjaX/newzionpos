@@ -200,16 +200,7 @@ requireLogin();
         $customer_id = $_GET['id'];
 
         // Your database connection code and SQL query here
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "ziondatabase";
-
-        $conn = mysqli_connect($servername, $username, $password, $dbname);
-
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
+        require_once 'db_connection.php';
 
         $sql = "SELECT * FROM customers WHERE id= ?";
         $stmt = mysqli_prepare($conn, $sql);
@@ -231,7 +222,7 @@ requireLogin();
     ?>
 
     <main>
-        <?php if (isset($customer)) : ?>
+        <?php if (isset($customer)): ?>
             <div class="customer-details">
                 <h2><span class="material-icons">account_circle</span>Customer Details</h2>
                 <p>ID:
@@ -260,7 +251,7 @@ requireLogin();
         <?php endif; ?>
 
         <!-- Display the customer's previous orders -->
-        <?php if (isset($customer_id)) : ?>
+        <?php if (isset($customer_id)): ?>
             <div class="previous-orders">
                 <h2><span class="material-icons">history</span>Previous Orders</h2>
                 <?php
@@ -275,7 +266,7 @@ requireLogin();
                             INNER JOIN products pr ON oi.product_id = pr.product_id
                             WHERE o.customer_id = ?
                             ORDER BY o.order_created DESC"; // Add this line to sort the orders in descending order by order_created
-
+            
 
 
                 $stmt = mysqli_prepare($conn, $sql);
@@ -325,9 +316,15 @@ requireLogin();
 
     </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSS_GFpoO/4q4UJ6h7NRO2atBctyUpuIq3MApUNVb66c/1Y7d6NW" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-gzjHzU5l3r9X7t7YNS8xiW45d2RZt6aEfropB98e8WAD7sJQLf74dK7G6zJM8T78" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0v8FqFjcJ6pajs/rfdfs3SO+kD4Ck5BdPtF+to8xMikenZR/" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSS_GFpoO/4q4UJ6h7NRO2atBctyUpuIq3MApUNVb66c/1Y7d6NW"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+        integrity="sha384-gzjHzU5l3r9X7t7YNS8xiW45d2RZt6aEfropB98e8WAD7sJQLf74dK7G6zJM8T78"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-pzjw8f+ua7Kw1TIq0v8FqFjcJ6pajs/rfdfs3SO+kD4Ck5BdPtF+to8xMikenZR/"
+        crossorigin="anonymous"></script>
 
 </body>
 

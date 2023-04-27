@@ -5,10 +5,7 @@ requireAdmin();
 
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
+    require_once 'db_connection.php';
 
     // Check if the form type is Subdivision
     if (isset($_POST['form_type']) && $_POST['form_type'] === 'Subdivision') {

@@ -1,11 +1,6 @@
 <?php
 // Connect to the database
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-
-// Check the connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve the user's input from the sign-up form
@@ -29,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt->affected_rows > 0) {
             echo "New admin created successfully.";
-            header("Location: add-test.php");
+            header("Location: main_dashboard.php");
         } else {
             echo "Error creating new admin: " . $conn->error;
         }

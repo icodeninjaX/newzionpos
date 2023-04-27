@@ -214,7 +214,7 @@ session_start();
 
             if (isset($_GET['id'])) {
                 $customer_id = $_GET['id'];
-            ?>
+                ?>
 
                 <form action="order-received.php" method="post">
                     <p style="font-size: 15px; font-weight: bold;">Customer ID:
@@ -225,15 +225,11 @@ session_start();
                     <div class="item_row">
                         <div class="item-row">
                             <label for="product_name" style="font-size: 20px; font-weight: bold;">Select product</label>
-                            <select name="product_name[]" class="product_name" style="height: 35px; font-size: 12px; font-weight: bold;">
+                            <select name="product_name[]" class="product_name"
+                                style="height: 35px; font-size: 12px; font-weight: bold;">
                                 <?php
                                 // Connect to the database
-                                $conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-
-                                // Check the connection
-                                if (!$conn) {
-                                    die("Connection failed: " . mysqli_connect_error());
-                                }
+                                require_once 'db_connection.php';
 
                                 // Prepare the SQL statement
                                 $stmt = mysqli_prepare($conn, "SELECT product_id, product_name, price FROM products");
@@ -248,7 +244,7 @@ session_start();
                                 echo "<option value='' selected>Select Product</option>";
 
                                 while (mysqli_stmt_fetch($stmt)) {
-                                    echo "<option value='{$product_name}|{$price}' data-price='{$price}'>{$product_name} - {$price}</option>";
+                                    echo "<option value='{$product_name}|{$price}' data-price='{$price}'>{$product_name}  {$price}</option>";
                                 }
 
                                 // Close the statement and connection
@@ -258,7 +254,8 @@ session_start();
                         </div>
                         <div class="item-row">
                             <label for="quantity" style="font-size: 20px; font-weight: bold;">Quantity:</label>
-                            <input type="number" name="quantity[]" class="quantity" value="1" required style="height: 35px; font-size: 12px; font-weight: bold;">
+                            <input type="number" name="quantity[]" class="quantity" value="1" required
+                                style="height: 35px; font-size: 12px; font-weight: bold;">
                         </div>
                         <button class="remove_item_btn" type="button">Remove Item</button>
 
@@ -267,17 +264,19 @@ session_start();
                     <br>
                     <div class="item-row total-row">
                         <label for="total_price" style="font-size: 20px; font-weight: bold;">Total Price:</label>
-                        <input type="number" name="total_price" id="total_price" step="0.01" readonly style="height: 35px; font-size: 12px; font-weight: bold;">
+                        <input type="number" name="total_price" id="total_price" step="0.01" readonly
+                            style="height: 35px; font-size: 12px; font-weight: bold;">
                         <br>
                     </div>
                     <?php
                     $branch_query = "SELECT id, branch_name, contact_number FROM branches";
                     $branch_result = mysqli_query($conn, $branch_query);
                     if ($branch_result) {
-                    ?>
+                        ?>
                         <div class="item-row">
                             <label for="branch" style="font-size: 20px; font-weight: bold;">Branch:</label>
-                            <select id="branch-selector" name="branch" style="height: 35px; font-size: 12px; font-weight: bold;">
+                            <select id="branch-selector" name="branch"
+                                style="height: 35px; font-size: 12px; font-weight: bold;">
                                 <?php
                                 while ($branch_row = mysqli_fetch_assoc($branch_result)) {
                                     $branch_id = $branch_row['id'];
@@ -288,25 +287,27 @@ session_start();
                                 ?>
                             </select>
                         </div>
-                    <?php
+                        <?php
                     }
                     mysqli_close($conn);
                     ?>
                     </select>
                     <div class="item-row">
                         <label for="cashier" style="font-size: 20px; font-weight: bold;">Cashier:</label>
-                        <input type="text" name="cashier" id="cashier" value="<?php echo $_SESSION['username']; ?>" readonly style="height: 35px; font-size: 12px; font-weight: bold;">
+                        <input type="text" name="cashier" id="cashier" value="<?php echo $_SESSION['username']; ?>" readonly
+                            style="height: 35px; font-size: 12px; font-weight: bold;">
                     </div>
 
                     <div class="item-row">
                         <label for="remarks" style="font-size: 20px; font-weight: bold;">Remarks:</label>
-                        <input type="text" name="remarks" id="remarks" style="height: 35px; font-size: 12px; font-weight: bold;">
+                        <input type="text" name="remarks" id="remarks"
+                            style="height: 35px; font-size: 12px; font-weight: bold;">
                     </div>
                     <input type="hidden" name="branch_phone_number" value="">
 
                     <input type="submit" name="submit" value="Add Order">
                 </form>
-            <?php
+                <?php
             } else {
                 echo "<p>Invalid request. Please try again.</p>";
             }
@@ -314,9 +315,15 @@ session_start();
 
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1xtqVMRAxVzJ3O59nDubBcYa7SwDsi9pX1Gp7D" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js" integrity="sha384-gzjHzU5l3r9X7t7YNS8xiW45d2RZt    4Dxjx7fW8eKs7sTzFt4h17nUpckHtS4z7gXqbcNmjz7W3K0783" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-pzjw8f+ua7Kw1TIq0v8FqFjcJ6pajs/rfdfs3SO+kD4Ck5BdPtF+to8xMm6lMapl" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/1xtqVMRAxVzJ3O59nDubBcYa7SwDsi9pX1Gp7D"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"
+        integrity="sha384-gzjHzU5l3r9X7t7YNS8xiW45d2RZt    4Dxjx7fW8eKs7sTzFt4h17nUpckHtS4z7gXqbcNmjz7W3K0783"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-pzjw8f+ua7Kw1TIq0v8FqFjcJ6pajs/rfdfs3SO+kD4Ck5BdPtF+to8xMm6lMapl"
+        crossorigin="anonymous"></script>
     <script>
         const priceInput = document.getElementById("total_price");
 
@@ -378,9 +385,9 @@ session_start();
         updatePrice();
 
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const branchSelector = document.getElementById('branch-selector');
-            branchSelector.addEventListener('change', function() {
+            branchSelector.addEventListener('change', function () {
                 const selectedOption = branchSelector.options[branchSelector.selectedIndex];
                 const contactNumber = selectedOption.getAttribute('data-contact-number');
 

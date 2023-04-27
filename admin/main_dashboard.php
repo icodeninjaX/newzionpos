@@ -2,400 +2,16 @@
 <html>
 
 <head>
-    <title>Main Dashboard</title>
+    <title>City Management</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap" rel="stylesheet">
 
-        body {
-            margin: 0;
-            background-color: #F8F9FA;
-        }
-
-        #header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #3F51B5;
-            padding: 16px;
-            color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .settings-container {
-            display: flex;
-        }
-
-        .settings-container a {
-            color: white;
-            text-decoration: none;
-            margin-left: 16px;
-        }
-
-        .settings-container a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            display: flex;
-        }
-
-        .sidebar {
-            background-color: #3F51B5;
-            height: 100vh;
-            width: 200px;
-            padding: 16px;
-            position: fixed;
-            top: 68px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            top: 81px;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-
-        }
-
-        .sidebar li a {
-            display: block;
-            text-decoration: none;
-            color: white;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            transition: background-color 0.3s;
-            font-weight: 500;
-        }
-
-        .sidebar li a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar li.active a {
-            background-color: rgba(255, 255, 255, 0.2);
-            font-weight: 700;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 16px;
-            background-color: #F8F9FA;
-            margin-left: 200px;
-            margin-top: 80px;
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 14px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            border-radius: 4px;
-
-        }
-
-        table thead th {
-            background-color: #3F51B5;
-            color: white;
-            text-align: left;
-            padding: 12px;
-            border-radius: 4px;
-        }
-
-        table tbody tr:nth-child(odd) {
-            background-color: #f2f2f2;
-        }
-
-        table tbody tr:hover {
-            background-color: #ddd;
-        }
-
-        table tbody td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .search-form {
-            display: flex;
-            align-items: center;
-            background-color: white;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            width: 35%;
-        }
-
-        .search-form input[type="text"] {
-            border: none;
-            outline: none;
-            padding: 8px;
-            font-size: 14px;
-            flex-grow: 1;
-        }
-
-        .search-form button {
-            background-color: #3F51B5;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            outline: none;
-            transition: background-color 0.3s;
-        }
-
-        .search-form button:hover {
-            background-color: #283593;
-        }
-
-        button {
-            background-color: #3F51B5;
-            color: white;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        button:hover {
-            background-color: #283593;
-        }
-
-        .delete-button,
-        .cancel-button {
-            background-color: #f44336;
-        }
-
-        .delete-button:hover,
-        .cancel-button:hover {
-            background-color: #d32f2f;
-        }
-
-        .logo {
-            max-width: 50px;
-            /* Adjust this value according to your desired logo size */
-            max-height: 50px;
-            /* Adjust this value according to your desired logo size */
-            height: auto;
-        }
-
-        th {
-            background-color: #3F51B5;
-            color: white;
-            padding: 12px;
-        }
-
-        .pagination {
-            text-align: center;
-            margin: 16px 0;
-        }
-
-        .pagination a {
-            display: inline-block;
-            margin: 0 4px;
-            padding: 8px 12px;
-            text-decoration: none;
-            background-color: #3F51B5;
-            color: white;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .pagination a.active,
-        .pagination a:hover {
-            background-color: #283593;
-        }
-
-        .dashboard-box {
-            padding: 20px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            margin-right: 20px;
-            flex-basis: calc(25% - 20px);
-            box-sizing: border-box;
-            transition: all 0.3s;
-        }
-
-        .dashboard-box h3 {
-            margin-bottom: 10px;
-            font-weight: 500;
-            font-size: 18px;
-            color: #3F51B5;
-        }
-
-        .dashboard-box .number {
-            font-size: 48px;
-            font-weight: 700;
-            color: #3F51B5;
-        }
-
-        .dashboard-box .icon {
-            font-size: 48px;
-            color: #3F51B5;
-            margin-bottom: 10px;
-        }
-
-        .dashboard-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.16), 0 4px 6px rgba(0, 0, 0, 0.23);
-        }
-
-        .dashboard-container {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .quick-stats {
-            display: flex;
-            justify-content: space-between;
-
-        }
-
-        .quick-stat {
-            width: 30%;
-            padding: 20px;
-            background-color: #f0f0f0;
-            border-radius: 5px;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            font-size: 15px;
-            font-weight: 700;
-            color: #3F51B5;
-        }
-
-        .content-section {
-            justify-content: space-between;
-        }
-
-        .recent-activity {
-            margin-bottom: 40px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-
-        .activity-group {
-            width: 48%;
-            background-color: #ffffff;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            display: flex;
-            flex-direction: column;
-            margin: 10px;
-        }
-
-        .activity-group ul li {
-            font-size: 14px;
-            padding: 12px;
-            background-color: #f2f2f2;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .activity-group ul li:hover {
-            background-color: #ddd;
-        }
-
-        .activity-group ul li span {
-            font-weight: 500;
-            color: #3F51B5;
-        }
-
-        .activity-group ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-
-        .activity-group li {
-            padding: 8px 0;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            justify-content: space-between;
-        }
-
-
-        .activity-group li:last-child {
-            border-bottom: none;
-        }
-
-        .activity-group-title {
-            font-size: 18px;
-            font-weight: 500;
-            color: #3F51B5;
-            margin-bottom: 16px;
-        }
-
-
-        .wrapper {
-            display: flex;
-            flex-direction: column;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(20px);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        .animated {
-            animation-duration: 0.5s;
-            animation-fill-mode: both;
-        }
-
-        .animated.fadeIn {
-            animation-name: fadeIn;
-        }
-
-        .animated.slideIn {
-            animation-name: slideIn;
-        }
-
-        .order-icon {
-            color: white;
-            font-size: 15px;
-            margin-right: 5px;
-        }
-    </style>
 </head>
 
 <body>
@@ -403,10 +19,7 @@
 
     <?php
     // Database connection
-    $conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
+    require_once 'db_connection.php';
 
     // Fetch the total number of orders
     $sql_orders = "SELECT COUNT(*) as total_orders FROM orders";
@@ -449,11 +62,11 @@
     $row = mysqli_fetch_assoc($result);
     $top_selling_product = $row['product_name'];
 
-    $latest_orders_query = "SELECT orders.*, customers.first_name, customers.last_name FROM orders JOIN customers ON orders.customer_id = customers.id ORDER BY orders.order_created DESC LIMIT 5";
+    $latest_orders_query = "SELECT orders.*, customers.first_name, customers.last_name FROM orders JOIN customers ON orders.customer_id = customers.id ORDER BY orders.order_created DESC LIMIT 3";
     $latest_orders_result = mysqli_query($conn, $latest_orders_query);
 
 
-    $new_customers_query = "SELECT * FROM customers ORDER BY id DESC LIMIT 5";
+    $new_customers_query = "SELECT * FROM customers ORDER BY id DESC LIMIT 3";
     $new_customers_result = mysqli_query($conn, $new_customers_query);
 
 
@@ -461,99 +74,111 @@
     mysqli_close($conn);
     ?>
 
-    <div id="header-container" class="animated fadeIn">
-        <a href="main_dashboard.php"><img src="img/background.jpg" alt="" class="logo"></a>
+    <div id="header-container">
+        <a href="main_dashboard.php"><img src="img/background-removebg-preview.png" alt="" class="logo"></a>
         <div class="settings-container">
-            <a href="#"><i class="material-icons">settings</i></a>
-            <a href="#"><i class="material-icons">person</i></a>
-            <a href="#"><i class="material-icons">admin_panel_settings</i></a>
-            <a href="logout.php">LOG OUT</a>
+            <a href="#"><img src="img/settings.png" alt="gas" class="order-img"></a>
+            <a href="#"><img src="img/edit-profile.png" alt="gas" class="order-img"></a>
+            <a href="#"><img src="img/change-password.png" alt="gas" class="order-img"></a>
         </div>
     </div>
 
     <div class="container">
         <div class="sidebar animated slideIn">
             <ul>
-                <li><a href="order_management.php" style="font-size: 12px;"><i class="material-icons order-icon"
-                            style="vertical-align: middle;">assignment</i>Order Management</a></li>
-                <li><a href="customer.php" style="font-size: 12px;"><i class="material-icons order-icon"
-                            style="vertical-align: middle;">group</i>Registered Customer</a></li>
-                <li><a href="product_management.php" style="font-size: 12px;"><i
-                            class="material-icons order-icon" style="vertical-align: middle;">list</i>Product
-                        Management</a></li>
-                <li><a href="registered_branch.php" style="font-size: 12px;"><i class="material-icons order-icon"
-                            style="vertical-align: middle;">store</i>Registered Branch</a></li>
-                <li><a href="sales_report.php" style="font-size: 12px;"><i class="material-icons order-icon"
-                            style="vertical-align: middle;">bar_chart</i>Sales Report</a></li>
+                <!-- Your existing menu items -->
+                <li><a href="order_management.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/inventory-management.png" alt="gas" class="orders">Order Management</a></li>
+                <li><a href="customer.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/customer-1.png" alt="gas" class="orders">Registered Customer</a></li>
+                <li><a href="product_management.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/gas-2.png" alt="gas" class="orders">Product Management</a></li>
+                <li><a href="registered_branch.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/franchise.png" alt="gas" class="orders">Registered Branch</a></li>
+                <li><a href="sales_report.php" style="font-size: 18px;" class="ordermanagement"><img src="img/sales.png"
+                            alt="gas" class="orders">Sales Report</a></li>
+                <p style="font-size: 10px; text-align: center; font-weight: bold;">Location Management</p>
+                <li><a href="city_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">City Management</a></li>
+                <li><a href="barangay_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Barangay Management</a></li>
+                <li><a href="subdivision_management.php" style="font-size: 16px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Subdivision Management</a></li>
+                <li><a href="street_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Street Management</a></li>
+                <br>
+                <li><a href="logout.php" class="ordermanagement log-out" style="font-size: 20px;"><img
+                            src="img/logout.png" alt="gas" class="orders">LOG OUT</a></li>
             </ul>
         </div>
-        <div class="main-content animated fadeIn">
+        <div class="main-content">
             <div class="content-header">
-                <h1>Welcome to the Main Dashboard</h1>
+                <h1
+                    style="font-size: 25px; font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
+                    <img src="img/home.png" alt="gas" class="home">Main Dashboard
+                </h1>
             </div>
             <div class="dashboard-container">
                 <div class="dashboard-box">
-                    <i class="material-icons icon">shopping_cart</i>
+                    <img src="img/cargo.png" alt="gas" class="gas">
                     <h3>Total Orders</h3>
                     <div class="number">
                         <?php echo $total_orders; ?>
                     </div>
                 </div>
                 <div class="dashboard-box">
-                    <i class="material-icons icon">people</i>
+                    <img src="img/rating.png" alt="gas" class="gas">
                     <h3>Total Customers</h3>
                     <div class="number">
                         <?php echo $total_customers; ?>
                     </div>
                 </div>
                 <div class="dashboard-box">
-                    <i class="material-icons icon">store</i>
+                    <img src="img/branch.png" alt="gas" class="gas">
                     <h3>Total Branches</h3>
                     <div class="number">
                         <?php echo $total_branches; ?>
                     </div>
                 </div>
-                <div class="dashboard-box" style="margin-right: 0;">
-                    <i class="material-icons icon">inventory_2</i>
+                <div class="dashboard-box">
+                    <img src="img/gas.png" alt="gas" class="gas">
                     <h3>Total Products</h3>
                     <div class="number">
                         <?php echo $total_products; ?>
                     </div>
                 </div>
-            </div>
-            <div class="content-section">
-                <h2>Quick Statistics</h2>
-                <div class="quick-stats">
-                    <div class="quick-stat">
-                        <i class="material-icons icon">shopping_cart</i>
-                        <h3>New Orders Today</h3>
-                        <div class="number">
-                            <?php
-                            // Fetch and display the number of new orders today
-                            echo $new_orders_today; ?>
-                        </div>
-                    </div>
-                    <div class="quick-stat">
-                        <i class="material-icons icon">person_add</i>
-                        <h3>New Customers Today</h3>
-                        <div class="number">
-                            <?php echo $new_customers_today; ?>
-                        </div>
-                    </div>
-                    <div class="quick-stat">
-                        <i class="material-icons icon">star_border</i>
-                        <h3>Top Selling Product</h3>
-                        <div class="number">
-                            <?php echo $top_selling_product; ?>
-                        </div>
+                <div class="dashboard-box">
+                    <img src="img/delivery-service.png" alt="gas" class="gas">
+                    <h3>New Orders Today</h3>
+                    <div class="number">
+                        <?php
+                        // Fetch and display the number of new orders today
+                        echo $new_orders_today; ?>
                     </div>
                 </div>
+                <div class="dashboard-box">
+                    <img src="img/customer.png" alt="gas" class="gas">
+                    <h3>New Customers Today</h3>
+                    <div class="number">
+                        <?php echo $new_customers_today; ?>
+                    </div>
+                </div>
+                <div class="dashboard-box">
+                    <img src="img/best-seller.png" alt="gas" class="gas">
+                    <h3>Top Selling Product</h3>
+                    <div class="number">
+                        <?php echo $top_selling_product; ?>
+                    </div>
+                </div>
+
             </div>
+
             <div class="content-section">
                 <h2>Recent Activity</h2>
                 <div class="recent-activity">
                     <div class="activity-group">
-                        <h3>Latest Orders</h3>
+                        <h3><i class="material-icons icon"
+                                style="vertical-align: text-top; margin-right: 5px;">shopping_cart</i>Latest Orders</h3>
                         <ul>
                             <?php while ($row = mysqli_fetch_assoc($latest_orders_result)): ?>
                                 <li>
@@ -563,7 +188,9 @@
                         </ul>
                     </div>
                     <div class="activity-group">
-                        <h3>New Customers</h3>
+                        <h3><i class="material-icons icon"
+                                style="vertical-align: text-top; margin-right: 5px;">supervised_user_circle</i>New
+                            Customers</h3>
                         <ul>
                             <?php while ($row = mysqli_fetch_assoc($new_customers_result)): ?>
                                 <li>

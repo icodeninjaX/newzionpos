@@ -174,17 +174,7 @@ requireLogin();
     }
 
 
-    // Your database connection code and SQL query here
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ziondatabase";
-
-    $conn = mysqli_connect($servername, $username, $password, $dbname);
-
-    if (!$conn) {
-      die("Connection failed: " . mysqli_connect_error());
-    }
+    require_once 'db_connection.php';
 
     $search = mysqli_real_escape_string($conn, $search);
     $sql = "SELECT * FROM customers WHERE first_name LIKE '%$search%' OR last_name LIKE '%$search%' OR tel_num LIKE '%$search%' LIMIT 10";

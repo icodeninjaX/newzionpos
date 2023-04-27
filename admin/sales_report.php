@@ -1,293 +1,33 @@
+<?php
+session_start();
+require_once 'admin_auth_check.php';
+requireAdmin();
+?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Report</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap" rel="stylesheet">
 
-        body {
-            margin: 0;
-            background-color: #F8F9FA;
-        }
-
-        #header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #3F51B5;
-            padding: 16px;
-            color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .settings-container {
-            display: flex;
-        }
-
-        .settings-container a {
-            color: white;
-            text-decoration: none;
-            margin-left: 16px;
-        }
-
-        .settings-container a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            display: flex;
-        }
-
-        .sidebar {
-            background-color: #3F51B5;
-            height: 100vh;
-            width: 200px;
-            padding: 16px;
-            position: fixed;
-            top: 68px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            top: 81px;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-
-        }
-
-        .sidebar li a {
-            display: block;
-            text-decoration: none;
-            color: white;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            transition: background-color 0.3s;
-            font-weight: 500;
-        }
-
-        .sidebar li a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar li.active a {
-            background-color: rgba(255, 255, 255, 0.2);
-            font-weight: 700;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 16px;
-            background-color: #F8F9FA;
-            margin-left: 200px;
-            margin-top: 80px;
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 10px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            border-radius: 4px;
-
-        }
-
-        table tbody tr:nth-child(odd) {
-            background-color: #f2f2f2;
-        }
-
-        table tbody tr:hover {
-            background-color: #ddd;
-        }
-
-        table tbody td {
-            border-bottom: 1px solid #ddd;
-        }
-
-        .search-form {
-            display: flex;
-            align-items: center;
-            background-color: white;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            width: 35%;
-        }
-
-        .search-form input[type="text"] {
-            border: none;
-            outline: none;
-            padding: 8px;
-            font-size: 14px;
-            flex-grow: 1;
-        }
-
-        .search-form button {
-            background-color: #3F51B5;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            outline: none;
-            transition: background-color 0.3s;
-        }
-
-        .search-form button:hover {
-            background-color: #283593;
-        }
-
-        button {
-            background-color: #3F51B5;
-            color: white;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        button:hover {
-            background-color: #283593;
-        }
-
-        .delete-button,
-        .cancel-button {
-            background-color: #f44336;
-        }
-
-        .delete-button:hover,
-        .cancel-button:hover {
-            background-color: #d32f2f;
-        }
-
-        .logo {
-            max-width: 50px;
-            max-height: 50px;
-            height: auto;
-        }
-
-        th {
-            background-color: #3F51B5;
-            color: white;
-            text-align: left;
-        }
-
-        .pagination {
-            text-align: center;
-            margin: 16px 0;
-        }
-
-        .pagination a {
-            display: inline-block;
-            margin: 0 4px;
-            padding: 8px 12px;
-            text-decoration: none;
-            background-color: #3F51B5;
-            color: white;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .pagination a.active,
-        .pagination a:hover {
-            background-color: #283593;
-        }
-
-        #print-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-
-        #print-btn:hover {
-            background-color: #388E3C;
-        }
-
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-
-            #sales-report-table,
-            #sales-report-table *,
-            #date-range-display,
-            #date-range-display * {
-                visibility: visible;
-            }
-
-            #sales-report-table {
-                position: absolute;
-                left: 0;
-                top: 30px;
-                width: 100%;
-                font-size: 14px;
-                border-collapse: collapse;
-            }
-
-            #date-range-display {
-                position: absolute;
-                left: 0;
-                top: 0;
-                font-size: 12px;
-                color: black;
-            }
-
-            th,
-            td {
-                border: 1px solid black;
-                padding: 2px;
-                text-align: left;
-            }
-
-            th {
-                background-color: white;
-                color: black;
-            }
-        }
-
-        .order-icon {
-            color: white;
-            font-size: 15px;
-            margin-right: 5px;
-        }
-    </style>
 </head>
 
 <body>
     <div id="header-container">
-        <!-- Add your existing header content here -->
-        <a href="main_dashboard.php"><img src="img/background.jpg" alt="" class="logo"></a>
+        <a href="main_dashboard.php"><img src="img/background-removebg-preview.png" alt="" class="logo"></a>
         <div class="settings-container">
-            <a href="#"><i class="material-icons">settings</i></a>
-            <a href="#"><i class="material-icons">person</i></a>
-            <a href="#"><i class="material-icons">admin_panel_settings</i></a>
-            <a href="logout.php">LOG OUT</a>
+            <a href="#"><i class="material-icons top-icons">settings</i></a>
+            <a href="#"><i class="material-icons top-icons">person</i></a>
+            <a href="#"><i class="material-icons top-icons">admin_panel_settings</i></a>
         </div>
     </div>
     <div class="container">
@@ -295,26 +35,28 @@
             <!-- Add your existing sidebar content here -->
             <ul>
                 <!-- Your existing menu items -->
-                <li><a href="order_management.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">assignment</i>Order Management</a></li>
-                <li><a href="customer.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">group</i>Registered Customer</a></li>
-                <li><a href="product_management.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">list</i>Product Management</a></li>
-                <li><a href="registered_branch.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">store</i>Registered Branch</a></li>
-                <li class="active"><a href="sales_report.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">bar_chart</i>Sales Report</a></li>
-
-                <!-- Location Manager drop-down menu -->
-                <li>
-                    <details style="font-size: 12px; color: white; font-weight: bold; padding-top: 5px;">
-                        <summary>
-                            <i class="material-icons order-icon" style="vertical-align: middle; padding-bottom: 5px;">location_city</i>Location Manager
-                        </summary>
-                        <ul>
-                            <li><a href="city_management.php">City Management</a></li>
-                            <li><a href="barangay_management.php">Barangay Management</a></li>
-                            <li><a href="subdivision_management.php">Subdivision Management</a></li>
-                            <li><a href="street_management.php">Street Management</a></li>
-                        </ul>
-                    </details>
-                </li>
+                <li><a href="order_management.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/inventory-management.png" alt="gas" class="orders">Order Management</a></li>
+                <li><a href="customer.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/customer-1.png" alt="gas" class="orders">Registered Customer</a></li>
+                <li><a href="product_management.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/gas-2.png" alt="gas" class="orders">Product Management</a></li>
+                <li><a href="registered_branch.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/franchise.png" alt="gas" class="orders">Registered Branch</a></li>
+                <li class="active"><a href="sales_report.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/sales.png" alt="gas" class="orders">Sales Report</a></li>
+                <p style="font-size: 10px; text-align: center; font-weight: bold;">Location Management</p>
+                <li><a href="city_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">City Management</a></li>
+                <li><a href="barangay_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Barangay Management</a></li>
+                <li><a href="subdivision_management.php" style="font-size: 16px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Subdivision Management</a></li>
+                <li><a href="street_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Street Management</a></li>
+                <br>
+                <li><a href="logout.php" class="ordermanagement log-out" style="font-size: 20px;"><img
+                            src="img/logout.png" alt="gas" class="orders">LOG OUT</a></li>
             </ul>
         </div>
 
@@ -323,11 +65,16 @@
 
         <div class="main-content">
             <div class="content-header">
-                <h1> Sales Report </h1>
+                <h1
+                    style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px; vertical-align: middle;">
+                    <img src="img/sales-report.png" alt="Orders" class="order-img">Sales Report
+                </h1>
             </div>
 
 
             <?php
+
+
             $from_date = isset($_GET['from-date']) ? $_GET['from-date'] : '';
             $until_date = isset($_GET['until-date']) ? $_GET['until-date'] : '';
             ?>
@@ -340,10 +87,11 @@
                 <input type="date" id="until-date" name="until-date" value="<?php echo $until_date; ?>">
 
                 <button type="submit">Show Report</button>
+                <button id="print-button">Print Report</button>
             </form>
 
             <p id="date-range-display"></p> <!-- Moved above the "Print Report" button -->
-            <button id="print-button">Print Report</button>
+
 
 
             <table id="sales-report-table">
@@ -362,13 +110,13 @@
                     <!-- Add PHP code to fetch sales data and display it in table rows -->
 
                     <?php
-                    $conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-                    if (!$conn) {
-                        die("Connection failed: " . mysqli_connect_error());
-                    }
+                    require_once 'db_connection.php';
 
                     $from_date = isset($_GET['from-date']) ? $_GET['from-date'] : '';
                     $until_date = isset($_GET['until-date']) ? $_GET['until-date'] : '';
+                    $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+                    $limit = 20; // Columns per page
+                    $offset = ($page - 1) * $limit;
 
                     if ($from_date != '' && $until_date != '') {
                         $sql_filter = "DATE(orders.order_created) BETWEEN '$from_date' AND '$until_date'";
@@ -376,18 +124,21 @@
                         $sql_filter = "1";
                     }
 
-
                     $sql = "SELECT customers.*, orders.*, order_items.quantity, order_items.price as paid_amount, products.product_name
-            FROM customers
-            JOIN orders ON customers.id = orders.customer_id
-            JOIN order_items ON orders.order_id = order_items.order_id
-            JOIN products ON order_items.product_id = products.product_id
-            WHERE $sql_filter
-            ORDER BY orders.order_created DESC";
-
+        FROM customers
+        JOIN orders ON customers.id = orders.customer_id
+        JOIN order_items ON orders.order_id = order_items.order_id
+        JOIN products ON order_items.product_id = products.product_id
+        WHERE $sql_filter
+        ORDER BY orders.order_id DESC
+        LIMIT $limit
+        OFFSET $offset";
 
 
                     $result = mysqli_query($conn, $sql);
+
+
+
 
                     if (mysqli_num_rows($result) > 0) {
                         while ($row = mysqli_fetch_assoc($result)) {
@@ -408,11 +159,35 @@
 
                 </tbody>
             </table>
+            <?php
+            // Add PHP code for pagination links
+            
+
+            // Find the total number of records
+            $sql_total_records = "SELECT COUNT(*) as total_records
+                      FROM customers
+                      JOIN orders ON customers.id = orders.customer_id
+                      JOIN order_items ON orders.order_id = order_items.order_id
+                      JOIN products ON order_items.product_id = products.product_id
+                      WHERE $sql_filter";
+            $result_total_records = mysqli_query($conn, $sql_total_records);
+            $row_total_records = mysqli_fetch_assoc($result_total_records);
+            $total_records = $row_total_records['total_records'];
+
+            $total_pages = ceil($total_records / $limit);
+
+
+            echo "<div class='pagination'>";
+            for ($i = 1; $i <= $total_pages; $i++) {
+                echo "<a href='sales_report.php?page=" . $i . "&from-date=" . $from_date . "&until-date=" . $until_date . "'>" . $i . "</a>";
+            }
+            echo "</div>";
+            ?>
         </div>
     </div>
 
     <script>
-        function displayDateRange() {
+        function getDateRangeText() {
             const url = new URL(window.location.href);
             const fromDate = url.searchParams.get('from-date');
             const untilDate = url.searchParams.get('until-date');
@@ -430,25 +205,36 @@
                     year: 'numeric'
                 }).format(new Date(untilDate));
 
-                document.getElementById("date-range-display").innerText = `This report is from ${formattedFromDate} to ${formattedUntilDate}`;
+                return `This report is from ${formattedFromDate} to ${formattedUntilDate}`;
+            }
+
+            return '';
+        }
+
+        function displayDateRange() {
+            const dateRangeText = getDateRangeText();
+            if (dateRangeText) {
+                document.getElementById("date-range-display").innerText = dateRangeText;
             }
         }
 
-        document.querySelector("form").addEventListener("submit", function(event) {
-            event.preventDefault();
-            const fromDate = document.getElementById("from-date").value;
-            const untilDate = document.getElementById("until-date").value;
-
-            const url = new URL(window.location.href);
-            url.searchParams.set('from-date', fromDate);
-            url.searchParams.set('until-date', untilDate);
-
-            window.location.href = url.toString();
-        });
 
         // Add this function to handle the print functionality
         function printReport() {
-            window.print();
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>New Zion LPG Corp.</title>');
+            printWindow.document.write('<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">');
+            printWindow.document.write('<link href="print-style.css" rel="stylesheet">');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write('<h1>Sales Report</h1>'); // Optional: Add a title for the printed report
+            const dateRangeText = getDateRangeText();
+            if (dateRangeText) {
+                printWindow.document.write('<p>' + dateRangeText + '</p>');
+            }
+            printWindow.document.write(document.getElementById("sales-report-table").outerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
         }
 
         // Add an event listener to the print button

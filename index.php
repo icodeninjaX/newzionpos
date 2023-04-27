@@ -273,7 +273,7 @@ if (isset($_POST['submit'])) {
           <div class="col-md-6">
             <div class="form-group">
               <label class="form-label" for="street">Street</label>
-              <input type="text" class="form-control" id="street" name="street" autocomplete="off" required>
+              <input type="text" class="form-control" id="street" name="street" required>
             </div>
           </div>
         </div>

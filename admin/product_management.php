@@ -2,6 +2,8 @@
 session_start();
 require_once 'admin_auth_check.php';
 requireAdmin();
+// Connect to the database
+require_once 'db_connection.php';
 ?>
 
 
@@ -9,291 +11,61 @@ requireAdmin();
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Management</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
-
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        body {
-            margin: 0;
-            background-color: #F8F9FA;
-        }
-
-        #header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #3F51B5;
-            padding: 16px;
-            color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .container {
-            display: flex;
-        }
-
-        .sidebar {
-            background-color: #3F51B5;
-            height: 100vh;
-            width: 200px;
-            padding: 16px;
-            position: fixed;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            top: 80px;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar li a {
-            display: block;
-            text-decoration: none;
-            color: white;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            transition: background-color 0.3s;
-            font-weight: 500;
-        }
-
-        .sidebar li a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar li.active a {
-            background-color: rgba(255, 255, 255, 0.2);
-            font-weight: 700;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 16px;
-            background-color: #F8F9FA;
-            margin-left: 200px;
-            margin-top: 80px;
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 14px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        th,
-        td {
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            width: 5%;
-            font-size: 12px;
-        }
-
-        tr:hover {
-            background-color: rgba(63, 81, 181, 0.1);
-        }
-
-        th {
-            background-color: #3F51B5;
-            color: white;
-        }
-
-        .add-product {
-            background-color: #3F51B5;
-            border: none;
-            color: white;
-            text-align: center;
-            display: inline-block;
-            font-size: 14px;
-            cursor: pointer;
-            border-radius: 4px;
-            padding: 8px 16px;
-            transition: background-color 0.3s;
-        }
-
-
-        button:hover {
-            background-color: #5C6BC0;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .logo {
-            max-width: 50px;
-            /* Adjust this value according to your desired logo size */
-            max-height: 50px;
-            height: auto;
-        }
-
-        .material-icons {
-            vertical-align: middle;
-        }
-
-        .icon-button {
-            font-size: 15px;
-            border: none;
-        }
-
-        .icon-button:hover {
-            background-color: rgba(63, 81, 181, 0.3);
-        }
-
-        .settings-container {
-            display: flex;
-        }
-
-        .settings-container a {
-            color: white;
-            text-decoration: none;
-            margin-left: 16px;
-        }
-
-        .header-brand {
-            display: flex;
-            align-items: center;
-        }
-
-        .header-brand-text {
-            font-weight: 700;
-            font-size: 24px;
-            margin-left: 8px;
-        }
-
-        /* Pagination styles */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .pagination a {
-            padding: 8px 12px;
-            background-color: #3F51B5;
-            color: white;
-            text-decoration: none;
-            margin: 0 4px;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .pagination a:hover {
-            background-color: #5C6BC0;
-        }
-
-        .pagination a.active {
-            background-color: #5C6BC0;
-            font-weight: 700;
-        }
-
-        .order-icon {
-            color: white;
-            font-size: 15px;
-            margin-right: 5px;
-        }
-
-        .icon-button.delete {
-            background-color: #f44336;
-            color: white;
-            border-radius: 4px;
-        }
-
-        .icon-button.delete:hover {
-            background-color: #e53935;
-        }
-
-        .icon-button.edit {
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 4px;
-        }
-
-        .icon-button.edit:hover {
-            background-color: #43A047;
-        }
-    </style>
-
-
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap" rel="stylesheet">
 
 </head>
+
 
 <body>
 
     <div id="header-container">
-        <a href="main_dashboard.php"><img src="img/background.jpg" alt="" class="logo"></a>
+        <a href="main_dashboard.php"><img src="img/background-removebg-preview.png" alt="" class="logo"></a>
         <div class="settings-container">
-            <a href="#"><i class="material-icons">settings</i></a>
-            <a href="#"><i class="material-icons">person</i></a>
-            <a href="#"><i class="material-icons">admin_panel_settings</i></a>
-            <a href="logout.php">LOG OUT</a>
+            <a href="#"><img src="img/settings.png" alt="gas" class="order-img"></a>
+            <a href="#"><img src="img/edit-profile.png" alt="gas" class="order-img"></a>
+            <a href="#"><img src="img/change-password.png" alt="gas" class="order-img"></a>
         </div>
-
     </div>
     <div class="container">
         <div class="sidebar">
             <!-- Add your existing sidebar content here -->
             <ul>
                 <!-- Your existing menu items -->
-                <li><a href="order_management.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">assignment</i>Order Management</a></li>
-                <li><a href="customer.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">group</i>Registered Customer</a></li>
-                <li class="active"><a href="product_management.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">list</i>Product Management</a></li>
-                <li><a href="registered_branch.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">store</i>Registered Branch</a></li>
-                <li><a href="sales_report.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">bar_chart</i>Sales Report</a></li>
-
-                <!-- Location Manager drop-down menu -->
-                <li>
-                    <details style="font-size: 12px; color: white; font-weight: bold; padding-top: 5px;">
-                        <summary>
-                            <i class="material-icons order-icon" style="vertical-align: middle; padding-bottom: 5px;">location_city</i>Location Manager
-                        </summary>
-                        <ul>
-                            <li><a href="city_management.php">City Management</a></li>
-                            <li><a href="barangay_management.php">Barangay Management</a></li>
-                            <li><a href="subdivision_management.php">Subdivision Management</a></li>
-                            <li><a href="street_management.php">Street Management</a></li>
-                        </ul>
-                    </details>
-                </li>
+                <li><a href="order_management.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/inventory-management.png" alt="gas" class="orders">Order Management</a></li>
+                <li><a href="customer.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/customer-1.png" alt="gas" class="orders">Registered Customer</a></li>
+                <li class="active"><a href="product_management.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/gas-2.png" alt="gas" class="orders">Product Management</a></li>
+                <li><a href="registered_branch.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/franchise.png" alt="gas" class="orders">Registered Branch</a></li>
+                <li><a href="sales_report.php" style="font-size: 18px;" class="ordermanagement"><img src="img/sales.png"
+                            alt="gas" class="orders">Sales Report</a></li>
+                <p style="font-size: 10px; text-align: center; font-weight: bold;">Location Management</p>
+                <li><a href="city_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">City Management</a></li>
+                <li><a href="barangay_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Barangay Management</a></li>
+                <li><a href="subdivision_management.php" style="font-size: 16px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Subdivision Management</a></li>
+                <li><a href="street_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Street Management</a></li>
+                <br>
+                <li><a href="logout.php" class="ordermanagement log-out" style="font-size: 20px;"><img
+                            src="img/logout.png" alt="gas" class="orders">LOG OUT</a></li>
             </ul>
         </div>
 
         <?php
-        // Connect to the database
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "ziondatabase";
-        $conn = mysqli_connect($servername, $username, $password, $dbname);
-
-        // Check connection
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
 
         // Pagination settings
         $limit = 10; // Number of products per page
@@ -312,8 +84,12 @@ requireAdmin();
 
         <div class="main-content">
             <div class="content-header">
-                <h1>Product Management</h1>
-                <button class="add-product"><a href="product_add_form.php">ADD PRODUCTS</a></button>
+                <h1
+                    style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px; vertical-align: middle;">
+                    <img src="img/product-management.png" alt="Orders" class="order-img">Product Management</h1>
+                <button class="add-product"><a href="product_add_form.php"><i class="material-icons order-icon"
+                            style="vertical-align: text-top; font-size: 20px; font-weight: bold;">add</i>ADD
+                        PRODUCTS</a></button>
             </div>
 
             <table>
@@ -351,9 +127,9 @@ requireAdmin();
                             } else {
                                 echo "<td>" . $row["date_added"] . "</td>";
                             }
+                            echo "<td><button class='edit-btn'><a href='update_form_products.php?id=" . $row['product_id'] . "'><i class='material-icons delete-icon'>edit</i></a></button></td>";
+                            echo "<td><button class='delete-btn'><a href='delete_product.php?id=" . $row['product_id'] . "'><i class='material-icons edit-icon'>delete</i></a></button></td>";
 
-                            echo "<td><button class='icon-button delete'><a href='delete_product.php?id=" . $row['product_id'] . "'><i class='material-icons'>delete</i></a></button></td>";
-                            echo "<td><button class='icon-button edit'><a href='update_form_products.php?id=" . $row['product_id'] . "'><i class='material-icons'>edit</i></a></button></td>";
                             echo "</tr>";
                         }
                     } else {
@@ -369,7 +145,7 @@ requireAdmin();
 
             <!-- Pagination -->
             <div class="pagination">
-                <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                     <a href="?page=<?= $i ?>" class="<?= $page == $i ? 'active' : '' ?>"><?= $i ?></a>
                 <?php endfor; ?>
             </div>

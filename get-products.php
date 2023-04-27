@@ -1,6 +1,5 @@
 <?php
-// Connect to the database
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
+require_once 'db_connection.php';
 
 // Retrieve the data from the "product" table
 $result = $conn->query("SELECT * FROM products");

@@ -7,10 +7,7 @@ if (!isset($_GET['id']) || !isset($_GET['type'])) {
     die("Missing required parameters.");
 }
 
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 $id = mysqli_real_escape_string($conn, $_GET['id']);
 $type = mysqli_real_escape_string($conn, $_GET['type']);

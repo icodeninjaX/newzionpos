@@ -1,12 +1,7 @@
 <?php
 
 // Connect to the database
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-
-// Check the connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 // Retrieve the user's input from the login form
 if (isset($_POST["username"]) && isset($_POST["password"])) {
@@ -88,9 +83,9 @@ if (isset($_POST["username"]) && isset($_POST["password"])) {
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
-        <!---<div>
+        
                 <button><a href="admin_signup.php">Signup</a></button>
-            </div> -->
+           
 
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

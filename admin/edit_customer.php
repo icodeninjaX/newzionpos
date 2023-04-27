@@ -6,10 +6,7 @@ requireAdmin();
 
 <?php
 // Connect to the database
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 // Get the customer ID from the URL
 $customer_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
@@ -41,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $landmark = trim($_POST['landmark']);
     $city = trim($_POST['city']);
     $tanktype = trim($_POST['tanktype']);
+    $barangay = trim($_POST['barangay']);
 
     // Validate and sanitize the input data
     $first_name = filter_var($first_name, FILTER_SANITIZE_STRING);
@@ -51,11 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $subdivision = filter_var($subdivision, FILTER_SANITIZE_STRING);
     $landmark = filter_var($landmark, FILTER_SANITIZE_STRING);
     $city = filter_var($city, FILTER_SANITIZE_STRING);
+    $barangay = filter_var($barangay, FILTER_SANITIZE_STRING);
 
     // Update the customer record in the database
-    $sql = "UPDATE customers SET first_name = ?, last_name = ?, tel_num =?, cus_address = ?, street = ?, subdivision = ?, landmark = ?, city = ? WHERE id = ?";
+    $sql = "UPDATE customers SET first_name = ?, last_name = ?, tel_num =?, cus_address = ?, street = ?, subdivision = ?, landmark = ?, city = ?, barangay = ? WHERE id = ?";
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, 'ssssssssi', $first_name, $last_name, $tel_num, $cus_address, $street, $subdivision, $landmark, $city, $customer_id);
+    mysqli_stmt_bind_param($stmt, 'sssssssssi', $first_name, $last_name, $tel_num, $cus_address, $street, $subdivision, $landmark, $city, $customer_id, $barangay);
     mysqli_stmt_execute($stmt);
 
 
@@ -64,173 +63,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Customer</title>
     <!-- Add your CSS and other head elements here -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
-
         body {
-            margin: 0;
-            background-color: #F8F9FA;
+            font-family: Arial, sans-serif;
         }
 
-        #header-container {
+        .form-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: wheat;
+            border: 2px solid lightcoral;
+            border-radius: 10px;
+        }
+
+        .form-row {
             display: flex;
             justify-content: space-between;
-            padding: 16px;
-            align-items: center;
-            background-color: #3F51B5;
-            color: black;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
+            margin-bottom: 10px;
         }
 
-        .container {
-            display: flex;
+        .form-group {
+            flex: 1;
+            padding: 0 10px;
         }
 
-        .sidebar {
-            background-color: #3F51B5;
-            height: 100vh;
-            width: 200px;
-            padding: 16px;
-            position: fixed;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            top: 80px;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .sidebar li a {
+        label {
             display: block;
-            text-decoration: none;
-            color: white;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            transition: background-color 0.3s;
-            font-weight: 500;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: black;
         }
 
-        .sidebar li a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar li.active a {
-            background-color: rgba(255, 255, 255, 0.2);
-            font-weight: 700;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 16px;
-            background-color: #F8F9FA;
-            margin-left: 200px;
-            margin-top: 80px;
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        table {
-            border-collapse: collapse;
+        input[type="text"] {
             width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
             font-size: 14px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            border-radius: 4px;
-            overflow: hidden;
         }
 
-        th,
-        td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        tr:hover {
-            background-color: rgba(63, 81, 181, 0.1);
-        }
-
-        th {
+        input[type="submit"] {
             background-color: #3F51B5;
             color: white;
-        }
-
-        .logo {
-            max-width: 50px;
-            /* Adjust this value according to your desired logo size */
-            max-height: 50px;
-            /* Adjust this value according to your desired logo size */
-            height: auto;
-        }
-
-        .material-icons {
-            color: white;
-        }
-
-        .settings-container {
-            display: flex;
-            gap: 16px;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .edit-button,
-        .delete-button {
-            display: inline-block;
-            font-size: 18px;
-            color: #3F51B5;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        button {
-            background-color: #3F51B5;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 12px;
             border: none;
-            color: white;
-            text-align: center;
-            display: inline-block;
-            font-size: 14px;
             cursor: pointer;
-            border-radius: 4px;
-            padding: 8px 16px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #5C6BC0;
-        }
-
-        .edit-button:hover,
-        .delete-button:hover {
-            color: rgba(63, 81, 181, 0.8);
+            border-radius: 20px;
         }
     </style>
 </head>
@@ -248,10 +144,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <div class="sidebar">
             <ul>
-                <li><a href="order_management.php">Order Management</a></li>
-                <li class="active"><a href="customer.php">Registered Customer</a></li>
-                <li><a href="product_management.php">Product Management</a></li>
-                <li><a href="registered_branch.php">Registered Branch</a></li>
+                <!-- Your existing menu items -->
+                <li><a href="order_management.php" style="font-size: 18px;" class="ordermanagement"><img src="img/inventory-management.png" alt="gas" class="orders">Order Management</a></li>
+                <li><a href="customer.php" style="font-size: 18px;" class="ordermanagement"><img src="img/customer-1.png" alt="gas" class="orders">Registered Customer</a></li>
+                <li><a href="product_management.php" style="font-size: 18px;" class="ordermanagement"><img src="img/gas-2.png" alt="gas" class="orders">Product Management</a></li>
+                <li><a href="registered_branch.php" style="font-size: 18px;" class="ordermanagement"><img src="img/franchise.png" alt="gas" class="orders">Registered Branch</a></li>
+                <li><a href="sales_report.php" style="font-size: 18px;" class="ordermanagement"><img src="img/sales.png" alt="gas" class="orders">Sales Report</a></li>
+                <p style="font-size: 10px; text-align: center; font-weight: bold;">Location Management</p>
+                <li><a href="city_management.php" style="font-size: 17px;" class="ordermanagement"><img src="img/location.png" alt="gas" class="orders">City Management</a></li>
+                <li><a href="barangay_management.php" style="font-size: 17px;" class="ordermanagement"><img src="img/location.png" alt="gas" class="orders">Barangay Management</a></li>
+                <li><a href="subdivision_management.php" style="font-size: 16px;" class="ordermanagement"><img src="img/location.png" alt="gas" class="orders">Subdivision Management</a></li>
+                <li><a href="street_management.php" style="font-size: 17px;" class="ordermanagement"><img src="img/location.png" alt="gas" class="orders">Street Management</a></li>
+                <br>
+                <li><a href="logout.php" class="ordermanagement log-out" style="font-size: 20px;"><img src="img/logout.png" alt="gas" class="orders">LOG OUT</a></li>
             </ul>
         </div>
 
@@ -260,62 +165,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="content-header">
                 <h1>Edit Customer</h1>
             </div>
+            <div class="form-container">
+                <form method="POST" action="edit_customer.php?id=<?php echo $customer_id; ?>">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name">First Name:</label>
+                            <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($customer['first_name']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="last_name">Last Name:</label>
+                            <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($customer['last_name']); ?>">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tel_num">Contact Number:</label>
+                            <input type="text" id="tel_num" name="tel_num" value="<?php echo htmlspecialchars($customer['tel_num']); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="cus_address">House #</label>
+                            <input type="text" id="cus_address" name="cus_address" value="<?php echo htmlspecialchars($customer['cus_address']); ?>">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="street">Street:</label>
+                            <input type="text" id="street" name="street" value="<?php echo htmlspecialchars($customer['street']); ?>">
+                        </div>
 
-            <form method="POST" action="edit_customer.php?id=<?php echo $customer_id; ?>" style="width: 60%;">
+                        <div class="form-group">
+                            <label for="subdivision">Subdivision:</label>
+                            <input type="text" id="subdivision" name="subdivision" value="<?php echo htmlspecialchars($customer['subdivision']); ?>">
+                        </div>
 
-                <label for="first_name">First Name:</label>
-                <input type="text" id="first_name" name="first_name"
-                    value="<?php echo htmlspecialchars($customer['first_name']); ?>"
-                    style="width: 100%; padding: 8px; margin-top: 7px; margin-bottom: 3px; font-size: 14px;">
+                        <div class="form-group">
+                            <label for="barangay">Barangay</label>
+                            <input type="text" id="barangay" name="barangay" value="<?php echo htmlspecialchars($customer['barangay']); ?>">
+                        </div>
+                    </div>
+                    <div class="form-row">
 
-                <label for="last_name">Last Name:</label>
-                <input type="text" id="last_name" name="last_name"
-                    value="<?php echo htmlspecialchars($customer['last_name']); ?>"
-                    style="width: 100%; padding: 8px; margin-top: 7px; margin-bottom: 3px; font-size: 14px;">
-
-                <label for="last_name">Contact Number:</label>
-                <input type="text" id="tel_num" name="tel_num"
-                    value="<?php echo htmlspecialchars($customer['tel_num']); ?>"
-                    style="width: 100%; padding: 8px; margin-top: 7px; margin-bottom: 3px; font-size: 14px;">
-
-                <label for="cus_address">Address:</label>
-                <input type="text" id="cus_address" name="cus_address"
-                    value="<?php echo htmlspecialchars($customer['cus_address']); ?>"
-                    style="width: 100%; padding: 8px; margin-top: 7px; margin-bottom: 3px; font-size: 14px;">
-
-                <label for="street">Street:</label>
-                <input type="text" id="street" name="street"
-                    value="<?php echo htmlspecialchars($customer['street']); ?>"
-                    style="width: 100%; padding: 8px; margin-top: 7px; margin-bottom: 3px; font-size: 14px;">
-
-                <label for="subdivision">Subdivision:</label>
-                <input type="text" id="subdivision" name="subdivision"
-                    value="<?php echo htmlspecialchars($customer['subdivision']); ?>"
-                    style="width: 100%; padding: 8px; margin-top: 7px; margin-bottom: 3px; font-size: 14px;">
-
-                <label for="landmark">Landmark:</label>
-                <input type="text" id="landmark" name="landmark"
-                    value="<?php echo htmlspecialchars($customer['landmark']); ?>"
-                    style="width: 100%; padding: 8px; margin-top: 7px; margin-bottom: 3px; font-size: 14px;">
-
-                <label for="city">City:</label>
-                <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($customer['city']); ?>"
-                    style="width: 100%; padding: 8px; margin-top: 7px; margin-bottom: 3px; font-size: 14px;">
-                <br>
-                <br>
-                <input type="submit" value="Save Changes"
-                    style="background-color: #3F51B5; color: white; font-size: 14px; font-weight: 500; padding: 8px; border: none; cursor: pointer; border-radius: 4px;"
-                    onclick="displayMessage()">
-            </form>
+                        <div class="form-group">
+                            <label for="city">City:</label>
+                            <input type="text" id="city" name="city" value="<?php echo htmlspecialchars($customer['city']); ?>">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="landmark">Landmark:</label>
+                            <input type="text" id="landmark" name="landmark" value="<?php echo htmlspecialchars($customer['landmark']); ?>">
+                        </div>
 
 
-        </div>
+                    </div>
 
-        <script>
-            function displayMessage() {
-                alert("Customer Edited Succesfully");
-            }
-        </script>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="submit" value="Save Changes" onclick="displayMessage()">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <script>
+                function displayMessage() {
+                    alert("Customer Edited Successfully");
+                }
+            </script>
 </body>
 
 </html>

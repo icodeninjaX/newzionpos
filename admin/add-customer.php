@@ -1,12 +1,7 @@
 <?php
 
 // Connect to the database
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-
-// Check if the connection was successful
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 // Get the customer data from the AJAX request
 $cus_code = $_POST["cus_code"];

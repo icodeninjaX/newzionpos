@@ -5,10 +5,7 @@ requireAdmin();
 ?>
 
 <?php
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];

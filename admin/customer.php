@@ -6,10 +6,7 @@ requireAdmin();
 
 <?php
 // Connect to the database
-$conn = mysqli_connect("localhost", "root", "", "ziondatabase");
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once 'db_connection.php';
 
 // Define the number of records per page
 $records_per_page = 10;
@@ -65,265 +62,30 @@ if (isset($_POST['delete'])) {
 
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registered Customer</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap" rel="stylesheet">
 
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        body {
-            margin: 0;
-            background-color: #F8F9FA;
-        }
-
-        #header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #3F51B5;
-            padding: 16px;
-            color: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-
-        .container {
-            display: flex;
-        }
-
-        .sidebar {
-            background-color: #3F51B5;
-            height: 100vh;
-            width: 200px;
-            padding: 16px;
-            position: fixed;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            top: 80px;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .settings-container {
-            display: flex;
-        }
-
-        .settings-container a {
-            color: white;
-            text-decoration: none;
-            margin-left: 16px;
-        }
-
-        .sidebar li a {
-            display: block;
-            text-decoration: none;
-            color: white;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            transition: background-color 0.3s;
-            font-weight: 500;
-        }
-
-        .sidebar li a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar li.active a {
-            background-color: rgba(255, 255, 255, 0.2);
-            font-weight: 700;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            padding: 16px;
-            background-color: #F8F9FA;
-            margin-left: 200px;
-            margin-top: 80px;
-        }
-
-        .content-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 11px;
-            margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        th,
-        td {
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-
-        }
-
-        tr:hover {
-            background-color: rgba(63, 81, 181, 0.1);
-            cursor: pointer;
-        }
-
-        th {
-            font-size: 12px;
-            background-color: #3F51B5;
-            color: white;
-            width: 5%;
-        }
-
-        td {
-            height: 35px;
-        }
-
-        .logo {
-            max-width: 50px;
-            max-height: 50px;
-            height: auto;
-        }
-
-        .material-icons {
-            color: white;
-        }
-
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .pagination a {
-            text-decoration: none;
-            color: #3F51B5;
-            padding: 8px 12px;
-            margin-right: 4px;
-            border: 1px solid #3F51B5;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .pagination a:hover {
-            background-color: rgba(63, 81, 181, 0.1);
-        }
-
-        .pagination a.active {
-            background-color: #3F51B5;
-            color: white;
-        }
-
-        .search-form {
-            display: flex;
-            align-items: center;
-            background-color: white;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-            width: 35%;
-        }
-
-        .search-form input[type="text"] {
-            border: none;
-            outline: none;
-            padding: 8px;
-            font-size: 14px;
-            flex-grow: 1;
-        }
-
-        .search-form button {
-            background-color: #3F51B5;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            outline: none;
-            transition: background-color 0.3s;
-        }
-
-        .search-form button:hover {
-            background-color: #283593;
-        }
-
-        .edit-btn,
-        .delete-btn {
-            text-decoration: none;
-            padding: 6px 12px;
-            background-color: #3F51B5;
-            color: white;
-            border-radius: 4px;
-            font-size: 12px;
-            transition: background-color 0.3s;
-        }
-
-        .edit-btn:hover,
-        .delete-btn:hover {
-            background-color: #283593;
-        }
-
-        .delete-btn {
-            background-color: #f44336;
-        }
-
-        .delete-btn:hover {
-            background-color: #c62828;
-        }
-
-        .order-icon {
-            color: white;
-            font-size: 15px;
-            margin-right: 5px;
-        }
-
-        .edit-icon {
-            font-size: 20px;
-            vertical-align: middle;
-        }
-
-        .address {
-            width: 15%;
-            font-size: 10px;
-        }
-
-        .landmark {
-            width: 10%;
-        }
-
-        .city {
-            width: 8%;
-        }
-    </style>
 </head>
 
 <body>
 
     <div id="header-container">
-        <a href="main_dashboard.php"><img src="img/background.jpg" alt="" class="logo"></a>
+        <a href="main_dashboard.php"><img src="img/background-removebg-preview.png" alt="" class="logo"></a>
         <div class="settings-container">
-            <a href="#"><i class="material-icons">settings</i></a>
-            <a href="#"><i class="material-icons">person</i></a>
-            <a href="#"><i class="material-icons">admin_panel_settings</i></a>
-            <a href="logout.php">LOG OUT</a>
+            <a href="#"><img src="img/settings.png" alt="gas" class="order-img"></a>
+            <a href="#"><img src="img/edit-profile.png" alt="gas" class="order-img"></a>
+            <a href="#"><img src="img/change-password.png" alt="gas" class="order-img"></a>
         </div>
     </div>
 
@@ -332,35 +94,40 @@ if (isset($_POST['delete'])) {
             <!-- Add your existing sidebar content here -->
             <ul>
                 <!-- Your existing menu items -->
-                <li><a href="order_management.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">assignment</i>Order Management</a></li>
-                <li class="active"><a href="customer.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">group</i>Registered Customer</a></li>
-                <li><a href="product_management.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">list</i>Product Management</a></li>
-                <li><a href="registered_branch.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">store</i>Registered Branch</a></li>
-                <li><a href="sales_report.php" style="font-size: 12px;"><i class="material-icons order-icon" style="vertical-align: middle;">bar_chart</i>Sales Report</a></li>
-
-                <!-- Location Manager drop-down menu -->
-                <li>
-                    <details style="font-size: 12px; color: white; font-weight: bold; padding-top: 5px;">
-                        <summary>
-                            <i class="material-icons order-icon" style="vertical-align: middle; padding-bottom: 5px;">location_city</i>Location Manager
-                        </summary>
-                        <ul>
-                            <li><a href="city_management.php">City Management</a></li>
-                            <li><a href="barangay_management.php">Barangay Management</a></li>
-                            <li><a href="subdivision_management.php">Subdivision Management</a></li>
-                            <li><a href="street_management.php">Street Management</a></li>
-                        </ul>
-                    </details>
-                </li>
+                <li><a href="order_management.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/inventory-management.png" alt="gas" class="orders">Order Management</a></li>
+                <li class="active"><a href="customer.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/customer-1.png" alt="gas" class="orders">Registered Customer</a></li>
+                <li><a href="product_management.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/gas-2.png" alt="gas" class="orders">Product Management</a></li>
+                <li><a href="registered_branch.php" style="font-size: 18px;" class="ordermanagement"><img
+                            src="img/franchise.png" alt="gas" class="orders">Registered Branch</a></li>
+                <li><a href="sales_report.php" style="font-size: 18px;" class="ordermanagement"><img src="img/sales.png"
+                            alt="gas" class="orders">Sales Report</a></li>
+                <p style="font-size: 10px; text-align: center; font-weight: bold;">Location Management</p>
+                <li><a href="city_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">City Management</a></li>
+                <li><a href="barangay_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Barangay Management</a></li>
+                <li><a href="subdivision_management.php" style="font-size: 16px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Subdivision Management</a></li>
+                <li><a href="street_management.php" style="font-size: 17px;" class="ordermanagement"><img
+                            src="img/location.png" alt="gas" class="orders">Street Management</a></li>
+                <br>
+                <li><a href="logout.php" class="ordermanagement log-out" style="font-size: 20px;"><img
+                            src="img/logout.png" alt="gas" class="orders">LOG OUT</a></li>
             </ul>
         </div>
 
         <div class="main-content">
             <div class="content-header">
-                <h1> Registered Customers </h1>
+                <h1
+                    style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; font-size: 25px; vertical-align: middle;">
+                    <img src="img/registered-customer.png" alt="Orders" class="order-img">Registered Customers</h1>
                 <form method="GET" action="" class="search-form">
-                    <input type="text" name="search" placeholder="Search customers" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                    <button type="submit">Search</button>
+                    <input type="text" name="search" autocomplete="off" placeholder="Enter name or contact num"
+                        value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                    <button type="submit"><i class="material-icons search">search</i></button>
                 </form>
             </div>
 
@@ -368,14 +135,10 @@ if (isset($_POST['delete'])) {
                 <thead>
                     <tr>
                         <th>ID No.</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
+                        <th>Customer Name</th>
                         <th>Contact No.</th>
-                        <th>Address</th>
-                        <th>Street</th>
-                        <th>Subdivision</th>
+                        <th>Complete Address</th>
                         <th>Landmark</th>
-                        <th>City</th>
                         <th>Tank type</th>
 
                         <th colspan="2" style="text-align:center;">Actions</th>
@@ -387,20 +150,16 @@ if (isset($_POST['delete'])) {
                     while ($customer = mysqli_fetch_assoc($result)) {
                         echo "<tr>";
                         echo "<td class='id'>" . $customer["id"] . "</td>";
-                        echo "<td>" . $customer["first_name"] . "</td>";
-                        echo "<td>" . $customer["last_name"] . "</td>";
+                        echo "<td class='fullname'>" . $customer["first_name"] . " " . $customer["last_name"] . "</td>";
                         echo "<td>" . $customer["tel_num"] . "</td>";
-                        echo "<td class='address'>" . $customer["cus_address"] . "</td>";
-                        echo "<td>" . $customer["street"] . "</td>";
-                        echo "<td class='subdivision'>" . $customer["subdivision"] . "</td>";
+                        echo "<td class='address'>" . $customer["cus_address"] . " " . $customer["street"] . " " . $customer["subdivision"] . " " . $customer["barangay"] . " " . $customer["city"] . "</td>";
                         echo "<td class='landmark'>" . $customer["landmark"] . "</td>";
-                        echo "<td class='city'>" . $customer["city"] . "</td>";
                         echo "<td>" . $customer["tanktype"] . "</td>";
                         echo "<td>";
                         echo "<a href='edit_customer.php?id=" . $customer["id"] . "' class='edit-btn'><i class='material-icons edit-icon'>edit</i></a>";
                         echo "</td>";
                         echo "<td>";
-                        echo "<a href='delete_customer_action.php?id=" . $customer["id"] . "' class='delete-btn' onclick='deleteMessageDisplay()'><i class='material-icons edit-icon'>delete</i></a>";
+                        echo "<a href='delete_customer_action.php?id=" . $customer["id"] . "' class='delete-btn' onclick='deleteMessageDisplay()'><i class='material-icons delete-icon'>delete</i></a>";
                         echo "</td>";
                         echo "</tr>";
                     }
@@ -410,7 +169,7 @@ if (isset($_POST['delete'])) {
             </table>
 
             <div class="pagination">
-                <?php for ($page = 1; $page <= $total_pages; $page++) : ?>
+                <?php for ($page = 1; $page <= $total_pages; $page++): ?>
                     <a href="?page=<?php echo $page; ?>" <?php echo ($page == $current_page ? 'class="active"' : ''); ?>><?php echo $page; ?></a>
                 <?php endfor; ?>
             </div>
